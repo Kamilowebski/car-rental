@@ -1,5 +1,6 @@
 package pl.wypozyczalnia;
 
+import pl.wypozyczalnia.logika.WypozyczenieLogika;
 import pl.wypozyczalnia.model.Samochod;
 import pl.wypozyczalnia.model.Klient;
 import pl.wypozyczalnia.model.Wypozyczenie;
@@ -17,5 +18,11 @@ public class Main {
         System.out.println(s1);
         System.out.println(k1);
         System.out.println(w1);
+
+        w1.setDataZwrotu(LocalDate.now().plusDays(5));
+        double koszt = WypozyczenieLogika.obliczKoszt(w1, s1);
+        System.out.println("Koszt wypozyczenia samochodu: " + koszt + " zł");
+        System.out.println("Dostępny: " + WypozyczenieLogika.sprawdzDostepnosc(s1));
+
     }
 }

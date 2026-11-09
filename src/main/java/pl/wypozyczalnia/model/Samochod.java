@@ -49,10 +49,16 @@ public class Samochod
     {
         return rokProdukcji;
     }
+    public double getCenaZaDzien()
+    {
+        return cenaZaDzien;
+    }
     public boolean isDostepny()
     {
         return dostepny;
     }
+
+
     public void setDostepny(boolean dostepny)
     {
         this.dostepny = dostepny;
