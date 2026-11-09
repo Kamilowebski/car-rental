@@ -2,6 +2,9 @@ package pl.wypozyczalnia.model;
 
 import java.time.LocalDate;
 
+/**
+ * Reprezentuje klase wypożyczenia wypożyczalni samochodów.
+ */
 public class Wypozyczenie
 {
     private int id;

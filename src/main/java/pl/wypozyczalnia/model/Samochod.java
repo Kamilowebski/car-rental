@@ -1,5 +1,8 @@
 package pl.wypozyczalnia.model;
 
+/**
+ * Reprezentuje samochód dostępny w wypożyczalni.
+ */
 public class Samochod
 {
     private int id;
@@ -10,6 +13,16 @@ public class Samochod
     private double cenaZaDzien;
     private boolean dostepny;
 
+    /**
+     * Tworzy nowy objekt saomchodu.
+     * @param id unikalny id samochodu
+     * @param marka
+     * @param model
+     * @param rokProdukcji
+     * @param numerRejestracyjny
+     * @param cenaZaDzien
+     * @param dostepny
+     */
     public Samochod(int id, String marka, String model, int rokProdukcji, String numerRejestracyjny, double cenaZaDzien, boolean dostepny)
     {
         this.id = id;

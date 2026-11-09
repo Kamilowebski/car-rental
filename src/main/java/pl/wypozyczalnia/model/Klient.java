@@ -1,5 +1,8 @@
 package pl.wypozyczalnia.model;
 
+/**
+ * Reprezentuje klase klienta wypożyczalni samochów.
+ */
 public class Klient
 {
     private int id;
