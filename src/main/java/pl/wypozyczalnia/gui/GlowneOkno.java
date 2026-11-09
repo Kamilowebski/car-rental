@@ -18,7 +18,7 @@ public class GlowneOkno extends JFrame
         JTabbedPane zakladki = new JTabbedPane();
         zakladki.addTab("Samochody", new PanelSamochodow());
         zakladki.addTab("Klienci", new PanelKlientow());
-        zakladki.addTab("Wypozyczenia", new JPanel());
+        zakladki.addTab("Wypożyczenia", new PanelWypozyczen());
 
         add(zakladki);
         setVisible(true);
