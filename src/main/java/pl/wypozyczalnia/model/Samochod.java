@@ -53,6 +53,10 @@ public class Samochod
     {
         return cenaZaDzien;
     }
+    public String getNumerRejestracyjny()
+    {
+        return numerRejestracyjny;
+    }
     public boolean isDostepny()
     {
         return dostepny;
