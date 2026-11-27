@@ -34,8 +34,8 @@ public class PanelWypozyczen extends JPanel
 
     public PanelWypozyczen()
     {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout(0, 14));
+        setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
 
         add(tworzTabele(), BorderLayout.CENTER);
         add(tworzPanelPrzyciskow(), BorderLayout.SOUTH);
@@ -56,6 +56,9 @@ public class PanelWypozyczen extends JPanel
         };
 
         tabela = new JTable(modelTabeli);
+        tabela.setFillsViewportHeight(true);
+        tabela.getColumnModel().getColumn(0).setPreferredWidth(42);
+        tabela.getColumnModel().getColumn(1).setPreferredWidth(185);
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabela.getTableHeader().setReorderingAllowed(false);
 

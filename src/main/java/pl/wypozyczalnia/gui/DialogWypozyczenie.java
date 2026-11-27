@@ -31,8 +31,8 @@ public class DialogWypozyczenie extends JDialog
         ustawEtykiety(klienci, klient -> klient.getImie() + " " + klient.getNazwisko()
                 + " (#" + klient.getId() + ")");
 
-        JPanel formularz = new JPanel(new GridLayout(4, 2, 8, 8));
-        formularz.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel formularz = new JPanel(new GridLayout(4, 2, 12, 10));
+        formularz.setBorder(BorderFactory.createEmptyBorder(16, 18, 0, 18));
         formularz.add(new JLabel("Samochód"));
         formularz.add(samochody);
         formularz.add(new JLabel("Klient"));
@@ -43,13 +43,13 @@ public class DialogWypozyczenie extends JDialog
         formularz.add(poleZwrotu);
         add(formularz, BorderLayout.CENTER);
 
-        JPanel przyciski = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel przyciski = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
         JButton zapisz = new JButton("Zapisz");
         JButton anuluj = new JButton("Anuluj");
         zapisz.addActionListener(e -> zapisz());
         anuluj.addActionListener(e -> dispose());
-        przyciski.add(zapisz);
         przyciski.add(anuluj);
+        przyciski.add(zapisz);
         add(przyciski, BorderLayout.SOUTH);
         getRootPane().setDefaultButton(zapisz);
         pack();

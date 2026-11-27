@@ -13,17 +13,17 @@ public class DialogSamochod extends JDialog
     public DialogSamochod(JFrame rodzic, Samochod samochod)
     {
         super(rodzic, samochod == null ? "Dodaj samochód" : "Edytuj samochód", true);
-        setSize(350, 300);
-        setLocationRelativeTo(rodzic);
         setLayout(new BorderLayout(10, 10));
 
         add(tworzFormularz(samochod), BorderLayout.CENTER);
         add(tworzPrzyciski(), BorderLayout.SOUTH);
+        pack();
+        setLocationRelativeTo(rodzic);
     }
 
     private JPanel tworzPrzyciski()
     {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 10));
 
         JButton btnZapisz = new JButton("Zapisz");
         JButton btnAnuluj = new JButton("Anuluj");
@@ -31,22 +31,23 @@ public class DialogSamochod extends JDialog
         btnZapisz.addActionListener(e -> zapisz());
         btnAnuluj.addActionListener(e -> dispose());
 
-        panel.add(btnZapisz);
         panel.add(btnAnuluj);
+        panel.add(btnZapisz);
+        getRootPane().setDefaultButton(btnZapisz);
 
         return panel;
     }
 
     private JPanel tworzFormularz(Samochod s)
     {
-        JPanel panel = new JPanel(new GridLayout(5, 2, 8, 8));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(5, 2, 12, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(16, 18, 0, 18));
 
-        poleMarka = new JTextField(s != null ? s.getMarka() : "");
-        poleModel = new JTextField(s != null ? s.getModel() : "");
-        poleRok = new JTextField(s != null ? String.valueOf(s.getRokProdukcji()) : "");
-        poleRejestracji = new JTextField(s != null ? s.getNumerRejestracyjny() : "");
-        poleCena = new JTextField(s != null ? String.valueOf(s.getCenaZaDzien()) : "");
+        poleMarka = new JTextField(s != null ? s.getMarka() : "", 18);
+        poleModel = new JTextField(s != null ? s.getModel() : "", 18);
+        poleRok = new JTextField(s != null ? String.valueOf(s.getRokProdukcji()) : "", 18);
+        poleRejestracji = new JTextField(s != null ? s.getNumerRejestracyjny() : "", 18);
+        poleCena = new JTextField(s != null ? String.valueOf(s.getCenaZaDzien()) : "", 18);
 
         panel.add(new JLabel("Marka: "));
         panel.add(poleMarka);

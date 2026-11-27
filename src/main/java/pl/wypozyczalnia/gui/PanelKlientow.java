@@ -21,8 +21,8 @@ public class PanelKlientow extends JPanel
 
     public PanelKlientow()
     {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout(0, 14));
+        setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
         add(tworzPanelGorny(), BorderLayout.NORTH);
         add(tworzTabele(), BorderLayout.CENTER);
         add(tworzPanelPrzyciskow(), BorderLayout.SOUTH);
@@ -33,7 +33,7 @@ public class PanelKlientow extends JPanel
     private JPanel tworzPanelGorny()
     {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.add(new JLabel("Szukaj po nazwisku"));
+        panel.add(new JLabel("Nazwisko"));
         poleSzukaj = new JTextField(20);
         panel.add(poleSzukaj);
 
@@ -60,6 +60,7 @@ public class PanelKlientow extends JPanel
             }
         };
         tabela = new JTable(modelTabeli);
+        tabela.setFillsViewportHeight(true);
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabela.getTableHeader().setReorderingAllowed(false);
 

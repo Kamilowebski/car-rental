@@ -2,24 +2,55 @@
 
 Aplikacja Java Swing korzysta z MariaDB dostarczanej w pakiecie XAMPP. Projekt Maven znajduje się w głównym katalogu repozytorium.
 
-## Pierwsze uruchomienie na Windows
+## Uruchomienie na drugim komputerze z Windows
 
-1. Zainstaluj XAMPP, JDK 27 i Maven.
-2. W **XAMPP Control Panel** uruchom moduł **MySQL**. Domyślny port to `3306`.
-3. Jeżeli potrzebujesz nowej bazy, w katalogu repozytorium wykonaj w PowerShellu:
+### 1. Zainstaluj narzędzia i pobierz projekt
 
-   ```powershell
-   Get-Content -Raw .\database\schema.sql | & 'C:\xampp\mysql\bin\mysql.exe' --host=127.0.0.1 --port=3306 --user=root
-   ```
+- Zainstaluj [JDK 27 dla Windows](https://www.oracle.com/java/technologies/javase/jdk27-archive-downloads.html).
+- Zainstaluj [XAMPP dla Windows](https://www.apachefriends.org/download.html). Poniższe polecenia zakładają instalację w `C:\xampp`.
+- Do uruchomienia wybierz IntelliJ IDEA albo Maven w terminalu. IntelliJ ma wbudowanego Mavena. Do uruchomienia z PowerShella zainstaluj [Apache Maven](https://maven.apache.org/install.html).
 
-   Dostosuj ścieżkę do instalacji XAMPP. Jeśli konto wymaga hasła, dodaj opcję `--password`, aby klient o nie zapytał. Skrypt tworzy brakującą bazę i tabele. Jeśli istnieją już tabele zgodne ze schematem, możesz od razu przejść do uruchomienia.
-4. Uruchom aplikację:
+Skopiuj katalog projektu na drugi komputer albo pobierz go z GitHuba przez **Code → Download ZIP** i rozpakuj. Jeśli masz Git, możesz też użyć poleceń:
 
-   ```powershell
-   mvn compile exec:java
-   ```
+```powershell
+git clone https://github.com/Kamilowebski/car-rental.git
+cd car-rental
+```
 
-   W IntelliJ IDEA możesz otworzyć główny `pom.xml` i uruchomić klasę `pl.wypozyczalnia.Main`.
+Otwórz PowerShell w rozpakowanym lub sklonowanym katalogu. W tym miejscu powinny być plik `pom.xml` oraz katalogi `src` i `database`.
+
+### 2. Uruchom XAMPP i utwórz pustą bazę
+
+1. Otwórz **XAMPP Control Panel** i kliknij **Start** przy **MySQL**. Pod tą nazwą XAMPP uruchamia MariaDB. Aplikacja potrzebuje tylko tego modułu.
+2. W PowerShellu, w katalogu projektu, wykonaj:
+
+```powershell
+$mysql = 'C:\xampp\mysql\bin\mysql.exe'
+Get-Content -Raw .\database\schema.sql | & $mysql --host=127.0.0.1 --port=3306 --user=root --default-character-set=utf8mb4
+& $mysql --host=127.0.0.1 --port=3306 --user=root --execute 'USE wypozyczalnia; SHOW TABLES;'
+```
+
+Drugie polecenie powinno wypisać tabele `klient`, `samochod` i `wypozyczenie`. Przy pierwszym imporcie tabele są puste. Ponowny import tworzy wyłącznie brakujące elementy. Jeżeli XAMPP jest w innym katalogu, popraw ścieżkę w zmiennej `$mysql`. Jeżeli konto ma hasło, dodaj `--password` do poleceń klienta MariaDB i ustaw to samo hasło dla aplikacji zgodnie z sekcją poniżej.
+
+### 3. Uruchom aplikację
+
+**IntelliJ IDEA**
+
+1. Wybierz **File → Open**, wskaż główny plik `pom.xml` i wybierz **Open as Project**. Poczekaj, aż Maven pobierze zależności.
+2. W **File → Project Structure → Project** ustaw **Project SDK** na JDK 27. Jeżeli nie ma go na liście, użyj **Add SDK → JDK** i wskaż katalog instalacji JDK.
+3. Otwórz `src/main/java/pl/wypozyczalnia/Main.java` i kliknij zielony trójkąt obok metody `main`.
+
+**PowerShell**
+
+Ustaw `JAVA_HOME` na katalog JDK 27. Dodaj `%JAVA_HOME%\bin` oraz folder `bin` Mavena do zmiennej `Path`, a następnie otwórz nowe okno PowerShella. Przejdź do katalogu projektu i wykonaj:
+
+```powershell
+java -version
+mvn -version
+mvn compile exec:java
+```
+
+Pierwsze dwa polecenia powinny wskazać Javę z wersją główną `27`. Po trzecim otworzy się okno wypożyczalni. Puste zakładki są prawidłowe na nowej bazie. Aby sprawdzić działanie, dodaj samochód i klienta, utwórz wypożyczenie i zapisz zwrot. Przy kolejnych uruchomieniach wystarczy włączyć **MySQL** w XAMPP i ponownie uruchomić aplikację.
 
 ## Ustawienia połączenia
 
@@ -29,7 +60,32 @@ Aplikacja Java Swing korzysta z MariaDB dostarczanej w pakiecie XAMPP. Projekt M
 | `CAR_RENTAL_DB_USER` | `root` |
 | `CAR_RENTAL_DB_PASSWORD` | puste hasło |
 
-Jeśli lokalna instalacja używa innego portu, konta lub hasła, ustaw odpowiednią zmienną w PowerShellu lub w konfiguracji uruchomieniowej IntelliJ. Przykładowo `$env:CAR_RENTAL_DB_URL = 'jdbc:mariadb://localhost:3307/wypozyczalnia'` wybiera port `3307`.
+Jeśli lokalna instalacja używa innego portu, konta lub hasła, ustaw odpowiednie zmienne przed uruchomieniem. W PowerShellu użyj składni `$env:CAR_RENTAL_DB_USER = 'nazwa_konta'`. W IntelliJ wejdź w **Run → Edit Configurations → Environment variables**. Jeśli MariaDB działa na innym porcie, użyj tego portu zarówno w poleceniach importu, jak i w adresie JDBC.
+
+### Osobna baza do prezentacji
+
+Jeżeli `wypozyczalnia` zawiera już dane lub chcesz mieć osobną bazę na obronę, utwórz `wypozyczalnia_demo` na tym samym serwerze XAMPP. Wykonaj poniższe polecenia w katalogu projektu.
+
+```powershell
+$mysql = 'C:\xampp\mysql\bin\mysql.exe'
+(Get-Content -Raw .\database\schema.sql).Replace('wypozyczalnia', 'wypozyczalnia_demo') |
+    & $mysql --host=127.0.0.1 --port=3306 --user=root --default-character-set=utf8mb4
+```
+
+Wariant z danymi pokazowymi zawiera 10 samochodów, 10 klientów i 10 wypożyczeń. Cztery wypożyczenia są aktywne, w tym jedno po terminie. Dane są fikcyjne. Uruchom import jednokrotnie w pustej bazie `wypozyczalnia_demo`. Pomijając ten krok, otrzymasz pustą bazę do ręcznego wprowadzania danych.
+
+```powershell
+& $mysql --host=127.0.0.1 --port=3306 --user=root --default-character-set=utf8mb4 --database=wypozyczalnia_demo --execute 'source database/demo.sql'
+```
+
+Uruchom aplikację na bazie demonstracyjnej w tym samym oknie PowerShella:
+
+```powershell
+$env:CAR_RENTAL_DB_URL = 'jdbc:mariadb://localhost:3306/wypozyczalnia_demo'
+mvn compile exec:java
+```
+
+Jeśli uruchamiasz przez IntelliJ, ustaw ten sam `CAR_RENTAL_DB_URL` w konfiguracji programu. Każda baza ma własne dane.
 
 ## Dokumentacja
 

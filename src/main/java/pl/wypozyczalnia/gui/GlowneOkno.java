@@ -10,7 +10,7 @@ public class GlowneOkno extends JFrame
     public GlowneOkno()
     {
         setTitle("Wypożyczalnia samochodów");
-        setSize(1000,600);
+        setSize(1040, 620);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 

@@ -22,8 +22,8 @@ public class PanelSamochodow extends JPanel
 
     public PanelSamochodow()
     {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout(0, 14));
+        setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
 
         add(tworzPanelGorny(), BorderLayout.NORTH);
         add(tworzTabele(), BorderLayout.CENTER);
@@ -35,7 +35,7 @@ public class PanelSamochodow extends JPanel
     private JPanel tworzPanelGorny()
     {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.add(new JLabel("Szukaj: "));
+        panel.add(new JLabel("Marka lub model"));
         poleSzukaj = new JTextField(20);
         panel.add(poleSzukaj);
 
@@ -43,7 +43,7 @@ public class PanelSamochodow extends JPanel
         btnSzukaj.addActionListener(e -> szukaj());
         panel.add(btnSzukaj);
 
-        JButton btnPokazWszystkie = new JButton("Pokaz wszystkie");
+        JButton btnPokazWszystkie = new JButton("Pokaż wszystkie");
         btnPokazWszystkie.addActionListener(e -> odswiezZBazy()); // Dodano: odświeża listę z bazy.
         panel.add(btnPokazWszystkie);
 
@@ -61,6 +61,7 @@ public class PanelSamochodow extends JPanel
             }
         };
         tabela = new JTable(modelTabeli);
+        tabela.setFillsViewportHeight(true);
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabela.getTableHeader().setReorderingAllowed(false);
 

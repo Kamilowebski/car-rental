@@ -15,6 +15,10 @@ Kod znajduje się w `src/main/java/pl/wypozyczalnia`. Klasa `Main` sprawdza poł
 | `model` | Obiekty `Samochod`, `Klient` i `Wypozyczenie`. |
 | `baza` | Konfiguracja JDBC, interfejsy i implementacje DAO, mapowanie rekordów SQL oraz transakcje wypożyczenia i zwrotu. |
 
+## Wygląd interfejsu
+
+`Main.ustawWyglad()` włącza jasny motyw FlatLaf przed utworzeniem okien. `UIManager` ustawia wspólne parametry, między innymi wysokość wierszy tabel i kolor aktywnej zakładki. Ekrany nadal składają się ze standardowych komponentów Swing. Formularze używają `GridLayout` do ułożenia etykiet i pól w dwóch kolumnach, a `pack()` dopasowuje okno do zawartości.
+
 ## Schemat bazy
 
 Definicja dla nowej instalacji znajduje się w [database/schema.sql](../database/schema.sql). Każda z trzech tabel ma klucz główny `id`. Silnik InnoDB obsługuje transakcje i klucze obce.
