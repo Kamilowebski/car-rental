@@ -16,9 +16,21 @@ public class GlowneOkno extends JFrame
 
         //Panel z zakładkami
         JTabbedPane zakladki = new JTabbedPane();
-        zakladki.addTab("Samochody", new PanelSamochodow());
+        PanelSamochodow samochody = new PanelSamochodow();
+        PanelWypozyczen wypozyczenia = new PanelWypozyczen();
+        zakladki.addTab("Samochody", samochody);
         zakladki.addTab("Klienci", new PanelKlientow());
-        zakladki.addTab("Wypożyczenia", new PanelWypozyczen());
+        zakladki.addTab("Wypożyczenia", wypozyczenia);
+        zakladki.addChangeListener(e -> {
+            if (zakladki.getSelectedComponent() == samochody)
+            {
+                samochody.odswiezZBazy();
+            }
+            else if (zakladki.getSelectedComponent() == wypozyczenia)
+            {
+                wypozyczenia.odswiezZBazy();
+            }
+        });
 
         add(zakladki);
         setVisible(true);

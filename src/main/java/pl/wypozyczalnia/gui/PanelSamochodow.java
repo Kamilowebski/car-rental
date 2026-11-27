@@ -1,6 +1,8 @@
 package pl.wypozyczalnia.gui;
 
 import pl.wypozyczalnia.model.Samochod;
+import pl.wypozyczalnia.baza.SamochodDao; // Dodano: udostępnia operacje samochodów w bazie.
+import pl.wypozyczalnia.baza.SamochodDaoImpl; // Dodano: wybiera implementację DAO korzystającą z JDBC.
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,6 +16,7 @@ public class PanelSamochodow extends JPanel
     private JTable tabela;
     private DefaultTableModel modelTabeli;
     private JTextField poleSzukaj;
+    private final SamochodDao samochodDao = new SamochodDaoImpl(); // Dodano: łączy panel samochodów z DAO.
 
     private List<Samochod> samochody = new ArrayList<>();
 
@@ -22,19 +25,11 @@ public class PanelSamochodow extends JPanel
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        dodajPrzykladoweDane();
         add(tworzPanelGorny(), BorderLayout.NORTH);
         add(tworzTabele(), BorderLayout.CENTER);
         add(tworzPanelPrzyciskow(), BorderLayout.SOUTH);
 
-        odswiezTabele(samochody);
-    }
-
-    private void dodajPrzykladoweDane()
-    {
-        samochody.add(new Samochod(1, "Toyota", "Yaris", 2020, "Ki 1234", 150, true));
-        samochody.add(new Samochod(2, "Peugeot", "407", 2004, "TBU 0272", 15, true));
-        samochody.add(new Samochod(3, "Volkswagen", "Polo", 1998, "TBU 1234", 1, true));
+        odswiezZBazy(); // Dodano: wczytuje listę samochodów z bazy po utworzeniu tabeli.
     }
 
     private JPanel tworzPanelGorny()
@@ -49,7 +44,7 @@ public class PanelSamochodow extends JPanel
         panel.add(btnSzukaj);
 
         JButton btnPokazWszystkie = new JButton("Pokaz wszystkie");
-        btnPokazWszystkie.addActionListener(e -> odswiezTabele(samochody));
+        btnPokazWszystkie.addActionListener(e -> odswiezZBazy()); // Dodano: odświeża listę z bazy.
         panel.add(btnPokazWszystkie);
 
         return panel;
@@ -115,18 +110,10 @@ public class PanelSamochodow extends JPanel
         String fraza = poleSzukaj.getText().toLowerCase().trim();
         if (fraza.isEmpty())
         {
-            odswiezTabele(samochody);
+            odswiezZBazy(); // Dodano: przy pustym wyszukiwaniu pokazuje wszystkie auta z bazy.
             return;
         }
-        List<Samochod> wyniki = new ArrayList<>();
-        for (Samochod s : samochody)
-        {
-            if (s.getMarka().toLowerCase().contains(fraza) || s.getModel().toLowerCase().contains(fraza))
-            {
-                wyniki.add(s);
-            }
-        }
-        odswiezTabele(wyniki);
+        wykonajBezpiecznie(() -> { samochody = samochodDao.szukaj(fraza); odswiezTabele(samochody); }); // Dodano: szuka samochodów w bazie i pokazuje wyniki.
     }
 
     private void dodajSamochod()
@@ -137,18 +124,8 @@ public class PanelSamochodow extends JPanel
         Samochod nowy = dialog.getSamochod();
         if (nowy != null)
         {
-            nowy = new Samochod
-                    (
-                            samochody.size() + 1,
-                            nowy.getMarka(),
-                            nowy.getModel(),
-                            nowy.getRokProdukcji(),
-                            nowy.getNumerRejestracyjny(),
-                            nowy.getCenaZaDzien(),
-                            true
-                    );
-            samochody.add(nowy);
-            odswiezTabele(samochody);
+            Samochod doZapisu = nowy; // Dodano: przechowuje dane formularza do zapisu.
+            wykonajBezpiecznie(() -> { samochodDao.dodaj(doZapisu); odswiezZBazy(); }); // Dodano: zapisuje auto w bazie i pobiera aktualną listę.
         }
     }
 
@@ -167,16 +144,16 @@ public class PanelSamochodow extends JPanel
         Samochod zaktualizowany = dialog.getSamochod();
         if (zaktualizowany != null)
         {
-            samochody.set(wiersz, new Samochod(
+            Samochod doZapisu = new Samochod(
                     wybrany.getId(),
                     zaktualizowany.getMarka(),
                     zaktualizowany.getModel(),
                     zaktualizowany.getRokProdukcji(),
                     zaktualizowany.getNumerRejestracyjny(),
                     zaktualizowany.getCenaZaDzien(),
-                    true
-            ));
-            odswiezTabele(samochody);
+                    wybrany.isDostepny()
+            ); // Dodano: zachowuje aktualny stan dostępności edytowanego auta.
+            wykonajBezpiecznie(() -> { samochodDao.aktualizuj(doZapisu); odswiezZBazy(); }); // Dodano: zapisuje edycję w bazie i odświeża tabelę.
         }
     }
 
@@ -191,9 +168,19 @@ public class PanelSamochodow extends JPanel
         int potwierdz = JOptionPane.showConfirmDialog(this, "Czy napewno chcesz usunąć samochód?", "Potwierdzenie", JOptionPane.YES_NO_OPTION);
         if (potwierdz == JOptionPane.YES_OPTION)
         {
-            samochody.remove(wiersz);
-            odswiezTabele(samochody);
+            wykonajBezpiecznie(() -> { samochodDao.usun(samochody.get(wiersz).getId()); odswiezZBazy(); }); // Dodano: usuwa auto z bazy i odświeża tabelę.
         }
+    }
+
+    void odswiezZBazy() // Dodano: pobiera aktualne samochody z DAO.
+    {
+        wykonajBezpiecznie(() -> { samochody = samochodDao.pobierzWszystkie(); odswiezTabele(samochody); }); // Dodano: synchronizuje listę panelu i tabelę z bazą.
+    }
+
+    private void wykonajBezpiecznie(Runnable operacja) // Dodano: obsługuje błędy odczytu i zapisu.
+    {
+        try { operacja.run(); } // Dodano: wykonuje wybraną operację bazodanową.
+        catch (RuntimeException ex) { JOptionPane.showMessageDialog(this, ex.getMessage(), "Błąd bazy danych", JOptionPane.ERROR_MESSAGE); } // Dodano: pokazuje komunikat, gdy zapis lub odczyt się nie powiedzie.
     }
 
 }

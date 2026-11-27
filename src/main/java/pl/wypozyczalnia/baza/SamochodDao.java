@@ -20,7 +20,7 @@ public interface SamochodDao
     /** Dodaje nowy samochód do bazy danych. */
     void dodaj(Samochod samochod);
 
-    /** Aktualizuje samochód w bazie danych. */
+    /** Aktualizuje dane samochodu. Dostępność zmieniają operacje wypożyczenia i zwrotu. */
     void aktualizuj(Samochod samochod);
 
     /** Usuwa samochód o danym id z bazy danych */

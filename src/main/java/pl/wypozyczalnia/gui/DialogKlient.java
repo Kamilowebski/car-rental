@@ -12,6 +12,7 @@ public class DialogKlient extends JDialog
 
     private JTextField poleImie, poleNazwisko, poleTelefon, poleEmail, polePrawoJazdy;
     private Klient wynik = null;
+    private final int idKlienta;
 
     /**
      * @param rodzic  okno nadrzędne
@@ -20,6 +21,8 @@ public class DialogKlient extends JDialog
     public DialogKlient(JFrame rodzic, Klient klient)
     {
         super(rodzic, klient == null ? "Dodaj klienta" : "Edytuj klienta", true);
+        idKlienta = klient == null ? 0 : klient.getId();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(350, 320);
         setLocationRelativeTo(rodzic);
         setLayout(new BorderLayout(10, 10));
@@ -64,7 +67,18 @@ public class DialogKlient extends JDialog
 
     private void zapisz()
     {
-        // TODO – walidacja i zapis
+        String imie = poleImie.getText().trim();
+        String nazwisko = poleNazwisko.getText().trim();
+        String prawoJazdy = polePrawoJazdy.getText().trim();
+        if (imie.isEmpty() || nazwisko.isEmpty() || prawoJazdy.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this, "Wpisz imię, nazwisko i numer prawa jazdy.",
+                    "Brak danych", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        wynik = new Klient(idKlienta, imie, nazwisko, poleTelefon.getText().trim(),
+                poleEmail.getText().trim(), prawoJazdy);
+        dispose();
     }
 
     /** @return wypełniony klient lub null jeśli anulowano */

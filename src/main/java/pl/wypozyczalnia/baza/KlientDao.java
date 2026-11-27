@@ -4,25 +4,25 @@ import pl.wypozyczalnia.model.Klient;
 import java.util.List;
 
 /**
- * Interfejs definiujący operace bazodanowe dla klientów.
+ * Interfejs definiujący operacje odczytu i zapisu danych klientów.
  */
 public interface KlientDao
 {
-    /** Zwraca całą listę klientów */
+    /** Zwraca wszystkich klientów zapisanych w bazie. */
     List<Klient> pobierzWszystkie();
 
-    /** Zwraca klienta o danym id */
+    /** Zwraca klienta o podanym ID albo null, gdy nie istnieje. */
     Klient pobierzPoId(int id);
 
-    /** Dodaje klienta do bazy */
+    /** Dodaje nowego klienta do bazy. */
     void dodaj(Klient klient);
 
-    /** Aktualizuje rekord klienta w bazie */
+    /** Aktualizuje dane istniejącego klienta. */
     void aktualizuj(Klient klient);
 
-    /** Usuwa klienta z bazy */
+    /** Usuwa klienta o podanym ID. */
     void usun(int id);
 
-    /** Zwraca  klientów którch nazwisko zgadza się z parametrem */
+    /** Zwraca klientów, których nazwisko zawiera podaną frazę. */
     List<Klient> szukaj(String nazwisko);
 }
