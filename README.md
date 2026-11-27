@@ -30,7 +30,7 @@ Get-Content -Raw .\database\schema.sql | & $mysql --host=127.0.0.1 --port=3306 -
 & $mysql --host=127.0.0.1 --port=3306 --user=root --execute 'USE wypozyczalnia; SHOW TABLES;'
 ```
 
-Drugie polecenie powinno wypisać tabele `klient`, `samochod` i `wypozyczenie`. Przy pierwszym imporcie tabele są puste. Ponowny import tworzy wyłącznie brakujące elementy. Jeżeli XAMPP jest w innym katalogu, popraw ścieżkę w zmiennej `$mysql`. Jeżeli konto ma hasło, dodaj `--password` do poleceń klienta MariaDB i ustaw to samo hasło dla aplikacji zgodnie z sekcją poniżej.
+Drugie polecenie powinno wypisać tabele `klient`, `samochod` i `wypozyczenie`. Przy pierwszym imporcie tabele są puste. Ponowny import schematu tworzy wyłącznie brakujące elementy. Jeżeli XAMPP jest w innym katalogu, popraw ścieżkę w zmiennej `$mysql`. Jeżeli konto ma hasło, dodaj `--password` do poleceń klienta MariaDB i ustaw to samo hasło dla aplikacji zgodnie z sekcją poniżej.
 
 ### 3. Uruchom aplikację
 
@@ -61,31 +61,6 @@ Pierwsze dwa polecenia powinny wskazać Javę z wersją główną `27`. Po trzec
 | `CAR_RENTAL_DB_PASSWORD` | puste hasło |
 
 Jeśli lokalna instalacja używa innego portu, konta lub hasła, ustaw odpowiednie zmienne przed uruchomieniem. W PowerShellu użyj składni `$env:CAR_RENTAL_DB_USER = 'nazwa_konta'`. W IntelliJ wejdź w **Run → Edit Configurations → Environment variables**. Jeśli MariaDB działa na innym porcie, użyj tego portu zarówno w poleceniach importu, jak i w adresie JDBC.
-
-### Osobna baza do prezentacji
-
-Jeżeli `wypozyczalnia` zawiera już dane lub chcesz mieć osobną bazę na obronę, utwórz `wypozyczalnia_demo` na tym samym serwerze XAMPP. Wykonaj poniższe polecenia w katalogu projektu.
-
-```powershell
-$mysql = 'C:\xampp\mysql\bin\mysql.exe'
-(Get-Content -Raw .\database\schema.sql).Replace('wypozyczalnia', 'wypozyczalnia_demo') |
-    & $mysql --host=127.0.0.1 --port=3306 --user=root --default-character-set=utf8mb4
-```
-
-Wariant z danymi pokazowymi zawiera 10 samochodów, 10 klientów i 10 wypożyczeń. Cztery wypożyczenia są aktywne, w tym jedno po terminie. Dane są fikcyjne. Uruchom import jednokrotnie w pustej bazie `wypozyczalnia_demo`. Pomijając ten krok, otrzymasz pustą bazę do ręcznego wprowadzania danych.
-
-```powershell
-& $mysql --host=127.0.0.1 --port=3306 --user=root --default-character-set=utf8mb4 --database=wypozyczalnia_demo --execute 'source database/demo.sql'
-```
-
-Uruchom aplikację na bazie demonstracyjnej w tym samym oknie PowerShella:
-
-```powershell
-$env:CAR_RENTAL_DB_URL = 'jdbc:mariadb://localhost:3306/wypozyczalnia_demo'
-mvn compile exec:java
-```
-
-Jeśli uruchamiasz przez IntelliJ, ustaw ten sam `CAR_RENTAL_DB_URL` w konfiguracji programu. Każda baza ma własne dane.
 
 ## Dokumentacja
 
